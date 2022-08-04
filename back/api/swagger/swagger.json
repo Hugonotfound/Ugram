@@ -1,0 +1,1969 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Ugram API",
+    "description": "A Ugram API documentation by team 12",
+    "version": "1.0"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication requests"
+    },
+    {
+      "name": "person",
+      "description": "Users requests"
+    },
+    {
+      "name": "follow",
+      "description": "Subscriptions requests"
+    },
+    {
+      "name": "post",
+      "description": "Posts requests"
+    },
+    {
+      "name": "hashtag",
+      "description": "Hashtags requests"
+    },
+    {
+      "name": "likepost",
+      "description": "Likes on posts requests"
+    },
+    {
+      "name": "comment",
+      "description": "Comments requests"
+    },
+    {
+      "name": "likecomment",
+      "description": "Likes on comments requests"
+    },
+    {
+      "name": "notification",
+      "description": "Notifications requests"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/login/in": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Log into an account",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Credentials",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Infos of the logged user",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonName"
+            }
+          }
+        }
+      }
+    },
+    "/login/out": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Log out of an account",
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register or login with google OAuth",
+        "responses": {
+          "200": {
+            "description": "Redirection to a webpage"
+          }
+        }
+      }
+    },
+    "/person/id/{id_person}": {
+      "get": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Get a user infos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user details",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPerson"
+            }
+          }
+        }
+      }
+    },
+    "/person/all/{offset}": {
+      "get": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Get all users infos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offset",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of all users details",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonArray"
+            }
+          }
+        }
+      }
+    },
+    "/person/search/{search_text}/{offset}": {
+      "get": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Search a user by forename, lastname or username",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "search_text",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "offset",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of user names",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonNameArray"
+            }
+          }
+        }
+      }
+    },
+    "/person/followers": {
+      "get": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Get a list of the 5 most followed users",
+        "responses": {
+          "200": {
+            "description": "An array of users names",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonNameArray"
+            }
+          }
+        }
+      }
+    },
+    "/person/hashtag/{id_person}": {
+      "get": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Recommand 5 users with common interests with the requested user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer",
+            "description": "Id of the user asking for recommandations"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of users names",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonNameArray"
+            }
+          }
+        }
+      }
+    },
+    "/person/profile_picture/{id_person}": {
+      "get": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Get a user profile picture",
+        "produces": [
+          "image/png"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image file",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Upload a profile picture",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "image",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/person": {
+      "post": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Create a new user/account",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User infos to create an account",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PersonInputCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Id of the newly created user",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Update a user/account infos",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User infos to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PersonInputUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "person"
+        ],
+        "summary": "Delete a user/account",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the user to delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PersonInputDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    },
+    "/follow/followers/count/{id_person}": {
+      "get": {
+        "tags": [
+          "follow"
+        ],
+        "summary": "Get a person followers number",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followers number",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      }
+    },
+    "/follow/followers/name/{id_person}": {
+      "get": {
+        "tags": [
+          "follow"
+        ],
+        "summary": "Get a person followers names",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followers names",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonNameArray"
+            }
+          }
+        }
+      }
+    },
+    "/follow/subscriptions/count/{id_person}": {
+      "get": {
+        "tags": [
+          "follow"
+        ],
+        "summary": "Get a person subscriptions number",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscriptions number",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      }
+    },
+    "/follow/subscriptions/name/{id_person}": {
+      "get": {
+        "tags": [
+          "follow"
+        ],
+        "summary": "Get a person subscriptions names",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscriptions names",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonNameArray"
+            }
+          }
+        }
+      }
+    },
+    "/follow/subscriptions/check/{id_person}/{id_person_tocheck}": {
+      "get": {
+        "tags": [
+          "follow"
+        ],
+        "summary": "Check if a person is subscribed to another",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer",
+            "description": "Authenticated user"
+          },
+          {
+            "in": "path",
+            "name": "id_person_tocheck",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Is subscribed : true or false",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectBool"
+            }
+          }
+        }
+      }
+    },
+    "/follow/subscriptions": {
+      "post": {
+        "tags": [
+          "follow"
+        ],
+        "summary": "Subscribe to another user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Post infos",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FollowInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "follow"
+        ],
+        "summary": "Unsubscribe",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Post infos",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FollowInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    },
+    "/post/id/{id_post}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get a post infos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_post",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The post infos",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPost"
+            }
+          }
+        }
+      }
+    },
+    "/post/person/{id_person}/{offset}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get all posts related to a user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "path",
+            "name": "offset",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of posts",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPostArray"
+            }
+          }
+        }
+      }
+    },
+    "/post/hashtag/{id_hashtag}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get posts with this hashtag",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_hashtag",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of posts",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPostArray"
+            }
+          }
+        }
+      }
+    },
+    "/post/date/{offset}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get most recent posts",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offset",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of posts",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPostArray"
+            }
+          }
+        }
+      }
+    },
+    "/post/subnews/{offset}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get my subscriptions most recent posts",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offset",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of posts",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPostArray"
+            }
+          }
+        }
+      }
+    },
+    "/post/random/{offset}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get random posts",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offset",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of posts",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPostArray"
+            }
+          }
+        }
+      }
+    },
+    "/post/post_image/{id_post}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post image",
+        "produces": [
+          "image/png"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_post",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image file",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/post/post_image/{id_person}/{id_post}": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Upload post image",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "path",
+            "name": "id_post",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "image",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/post": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Create a new post",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Post infos",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostInputCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Id of the newly created post",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Update a post",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Post infos to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostInputUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Delete a post",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the post to delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostInputDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    },
+    "/hashtag/mostused": {
+      "get": {
+        "tags": [
+          "hashtag"
+        ],
+        "summary": "Get more oftenly used hashtags",
+        "responses": {
+          "200": {
+            "description": "Array of hashtags",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectHashtagArray"
+            }
+          }
+        }
+      }
+    },
+    "/hashtag/search/{search_text}": {
+      "get": {
+        "tags": [
+          "hashtag"
+        ],
+        "summary": "Search hashtags by name",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "search_text",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of hashtags",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectHashtagArray"
+            }
+          }
+        }
+      }
+    },
+    "/likepost/count/{id_post}": {
+      "get": {
+        "tags": [
+          "likepost"
+        ],
+        "summary": "Count likes on a post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_post",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The number of likes",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      }
+    },
+    "/likepost/related/{id_post}": {
+      "get": {
+        "tags": [
+          "likepost"
+        ],
+        "summary": "Get users who liked the post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_post",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users who liked the post",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonNameArray"
+            }
+          }
+        }
+      }
+    },
+    "/likepost": {
+      "post": {
+        "tags": [
+          "likepost"
+        ],
+        "summary": "Create a like on a post",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the post and of the person liking",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LikepostInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "likepost"
+        ],
+        "summary": "Delete a like on a post",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the post and of the person unliking",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LikepostInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    },
+    "/comment/id/{id_comment}": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get a comment infos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_comment",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The comment infos",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectComment"
+            }
+          }
+        }
+      }
+    },
+    "/comment/post/get/{id_post}": {
+      "get": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Get all comments on a post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_post",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comments infos",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectCommentArray"
+            }
+          }
+        }
+      }
+    },
+    "/comment": {
+      "post": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Create a comment",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Comment infos",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CommentInputCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Id of the newly created comment",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "comment"
+        ],
+        "summary": "Delete a comment",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the post to delete",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CommentInputDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    },
+    "/likecomment/count/{id_comment}": {
+      "get": {
+        "tags": [
+          "likecomment"
+        ],
+        "summary": "Count likes on a comment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_comment",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The number of likes",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      }
+    },
+    "/likecomment/related/{id_comment}": {
+      "get": {
+        "tags": [
+          "likecomment"
+        ],
+        "summary": "Get users who liked the comment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_comment",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users who liked the comment",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectPersonNameArray"
+            }
+          }
+        }
+      }
+    },
+    "/likecomment": {
+      "post": {
+        "tags": [
+          "likecomment"
+        ],
+        "summary": "Create a like on a comment",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the comment and of the person liking",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LikecommentInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "likecomment"
+        ],
+        "summary": "Delete a like on a post",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the comment and of the person unliking",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LikecommentInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    },
+    "/notification/count/{id_person}": {
+      "get": {
+        "tags": [
+          "notification"
+        ],
+        "summary": "Get a person notifications number",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notifications number",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectInt"
+            }
+          }
+        }
+      }
+    },
+    "/notification/id/{id_person}": {
+      "get": {
+        "tags": [
+          "notification"
+        ],
+        "summary": "Get a person notifications",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_person",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notifications",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectNotificationArray"
+            }
+          }
+        }
+      }
+    },
+    "/notification": {
+      "put": {
+        "tags": [
+          "notification"
+        ],
+        "summary": "Read a notification",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Id of the notification to read",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NotificationInputUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Empty ResponseObject with potential errors",
+            "schema": {
+              "$ref": "#/definitions/ResponseObjectEmpty"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "LoginInput": {
+      "type": "object",
+      "properties": {
+        "mail_person": {
+          "type": "string",
+          "default": "john.doe@gmail.com"
+        },
+        "password_person": {
+          "type": "string",
+          "format": "password",
+          "default": "password"
+        }
+      }
+    },
+    "PersonInputCreate": {
+      "type": "object",
+      "properties": {
+        "lastname_person": {
+          "type": "string",
+          "default": "Doe"
+        },
+        "firstname_person": {
+          "type": "string",
+          "default": "John"
+        },
+        "gender_person": {
+          "type": "string",
+          "enum": [
+            "M",
+            "F"
+          ],
+          "default": "M"
+        },
+        "birthdate_person": {
+          "type": "string",
+          "format": "date",
+          "default": "2000-01-01"
+        },
+        "username_person": {
+          "type": "string",
+          "default": "thejohndoe_"
+        },
+        "mail_person": {
+          "type": "string",
+          "default": "john.doe@gmail.com"
+        },
+        "password_person": {
+          "type": "string",
+          "format": "password",
+          "default": "password"
+        },
+        "phone_person": {
+          "type": "string",
+          "default": "0152486359"
+        }
+      }
+    },
+    "PersonInputUpdate": {
+      "type": "object",
+      "properties": {
+        "lastname_person": {
+          "type": "string",
+          "default": "Doe"
+        },
+        "firstname_person": {
+          "type": "string",
+          "default": "John"
+        },
+        "mail_person": {
+          "type": "string",
+          "default": "john.doe@gmail.com"
+        },
+        "phone_person": {
+          "type": "string",
+          "default": "0152486359"
+        }
+      }
+    },
+    "PersonInputDelete": {
+      "type": "object",
+      "properties": {
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        }
+      }
+    },
+    "PersonOutput": {
+      "type": "object",
+      "properties": {
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        },
+        "lastname_person": {
+          "type": "string",
+          "default": "Doe"
+        },
+        "firstname_person": {
+          "type": "string",
+          "default": "John"
+        },
+        "gender_person": {
+          "type": "string",
+          "enum": [
+            "M",
+            "F"
+          ],
+          "default": "M"
+        },
+        "birthdate_person": {
+          "type": "string",
+          "format": "date",
+          "default": "2000-01-01"
+        },
+        "username_person": {
+          "type": "string",
+          "default": "thejohndoe_"
+        },
+        "mail_person": {
+          "type": "string",
+          "default": "john.doe@gmail.com"
+        },
+        "phone_person": {
+          "type": "string",
+          "default": "0152486359"
+        },
+        "confidentiality_person": {
+          "type": "string",
+          "enum": [
+            "PUBLIC",
+            "PRIVATE"
+          ],
+          "default": "PUBLIC"
+        },
+        "displayonline_person": {
+          "type": "boolean",
+          "default": "true"
+        },
+        "followersnumber_person": {
+          "type": "integer",
+          "default": "0"
+        },
+        "followingnumber_person": {
+          "type": "integer",
+          "default": "0"
+        },
+        "bio_person": {
+          "type": "string",
+          "default": "..."
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PersonName": {
+      "type": "object",
+      "properties": {
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        },
+        "lastname_person": {
+          "type": "string",
+          "default": "Doe"
+        },
+        "firstname_person": {
+          "type": "string",
+          "default": "John"
+        },
+        "username_person": {
+          "type": "string",
+          "default": "thejohndoe_"
+        }
+      }
+    },
+    "FollowInput": {
+      "type": "object",
+      "properties": {
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_person_followed": {
+          "type": "integer",
+          "default": "2"
+        }
+      }
+    },
+    "PostInputCreate": {
+      "type": "object",
+      "properties": {
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        },
+        "caption_post": {
+          "type": "string",
+          "default": "My trip in Italy"
+        },
+        "hashtags_post": {
+          "type": "string",
+          "default": "#italy"
+        }
+      }
+    },
+    "PostInputUpdate": {
+      "type": "object",
+      "properties": {
+        "id_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        },
+        "caption_post": {
+          "type": "string",
+          "default": "My trip in Italy"
+        },
+        "hashtags_post": {
+          "type": "string",
+          "default": "#italy"
+        }
+      }
+    },
+    "PostInputDelete": {
+      "type": "object",
+      "properties": {
+        "id_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_person": {
+          "type": "integer",
+          "default": "1",
+          "description": "Id of the logged in user"
+        }
+      }
+    },
+    "PostOutput": {
+      "type": "object",
+      "properties": {
+        "id_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "person": {
+          "$ref": "#/definitions/PersonName"
+        },
+        "isliked_post": {
+          "type": "boolean",
+          "default": "true"
+        },
+        "likes_post": {
+          "type": "integer",
+          "default": "3"
+        },
+        "comments_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "caption_post": {
+          "type": "string",
+          "default": "My trip in Italy"
+        },
+        "hashtags_post": {
+          "type": "string",
+          "default": "#italy"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Hashtag": {
+      "type": "object",
+      "properties": {
+        "id_hashtag": {
+          "type": "integer",
+          "default": "1"
+        },
+        "name_hashtag": {
+          "type": "string",
+          "default": "italy"
+        }
+      }
+    },
+    "LikepostInput": {
+      "type": "object",
+      "properties": {
+        "id_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        }
+      }
+    },
+    "CommentInputCreate": {
+      "type": "object",
+      "properties": {
+        "id_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        },
+        "text_comment": {
+          "type": "string",
+          "default": "..."
+        }
+      }
+    },
+    "CommentInputDelete": {
+      "type": "object",
+      "properties": {
+        "id_comment": {
+          "type": "integer",
+          "default": "1"
+        }
+      }
+    },
+    "CommentOutput": {
+      "type": "object",
+      "properties": {
+        "id_comment": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "person": {
+          "$ref": "#/definitions/PersonName"
+        },
+        "isliked_comment": {
+          "type": "boolean",
+          "default": "true"
+        },
+        "likes_comment": {
+          "type": "integer",
+          "default": "3"
+        },
+        "text_comment": {
+          "type": "string",
+          "default": "..."
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "LikecommentInput": {
+      "type": "object",
+      "properties": {
+        "id_comment": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_person": {
+          "type": "integer",
+          "default": "1"
+        }
+      }
+    },
+    "NotificationInputUpdate": {
+      "type": "object",
+      "properties": {
+        "id_notification": {
+          "type": "integer",
+          "default": "1"
+        }
+      }
+    },
+    "NotificationOutput": {
+      "type": "object",
+      "properties": {
+        "id_notification": {
+          "type": "integer",
+          "default": "1"
+        },
+        "id_person_receiving": {
+          "type": "integer",
+          "default": "1"
+        },
+        "person_sending": {
+          "$ref": "#/definitions/PersonName"
+        },
+        "type_notification": {
+          "type": "string",
+          "enum": [
+            "LIKEPOST",
+            "COMMENT",
+            "LIKECOMMENT",
+            "FOLLOWER"
+          ],
+          "default": "LIKEPOST"
+        },
+        "isread_notification": {
+          "type": "boolean",
+          "default": false
+        },
+        "post": {
+          "$ref": "#/definitions/NotificationPost"
+        },
+        "id_comment": {
+          "type": "integer",
+          "default": "1"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "NotificationPost": {
+      "type": "object",
+      "properties": {
+        "id_post": {
+          "type": "integer",
+          "default": "1"
+        },
+        "caption_post": {
+          "type": "string",
+          "default": "..."
+        }
+      }
+    },
+    "ResponseObjectEmpty": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "object",
+          "default": null
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectBool": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "boolean",
+          "default": false
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectInt": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "integer",
+          "default": 1
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectPerson": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "$ref": "#/definitions/PersonOutput"
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectPersonArray": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PersonOutput"
+          }
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectPersonName": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "$ref": "#/definitions/PersonName"
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectPersonNameArray": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PersonName"
+          }
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectPost": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "$ref": "#/definitions/PostOutput"
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectPostArray": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PostOutput"
+          }
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectComment": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "$ref": "#/definitions/CommentOutput"
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectCommentArray": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommentOutput"
+          }
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectHashtagArray": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Hashtag"
+          }
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    },
+    "ResponseObjectNotificationArray": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NotificationOutput"
+          }
+        },
+        "err": {
+          "type": "string",
+          "enum": [
+            "NO",
+            "AUTHENTICATION",
+            "MAIL_EXIST",
+            "USERNAME_EXIST",
+            "OTHER"
+          ],
+          "default": "NO"
+        }
+      }
+    }
+  }
+}

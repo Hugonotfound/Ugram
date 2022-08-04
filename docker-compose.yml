@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8
+    restart: on-failure
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_PASSWORD=nash
+      - MYSQL_USER=nash
+      - MYSQL_DATABASE=ugram
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./back/database:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+  back:
+    build:
+     context: ./back
+    restart: on-failure
+    depends_on:
+      - db
+    ports:
+      - 5000:5000
+    environment:
+      - PORT=5000
+    volumes:
+      - ./back:/app
+    networks:
+      - frontend
+      - backend
+  front:
+    build:
+      context: ./front
+    restart: on-failure
+    depends_on:
+      - back
+    volumes:
+       - ./front:/app
+    ports:
+      - 3000:3000
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  db-data:
+  
